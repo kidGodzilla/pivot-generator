@@ -49,52 +49,6 @@
 <script src="./data.js"></script>
 
 <script>
-    // Utilities
-
-    // Fix Object Value Types for a Flat object
-    function fixObjectValueTypes (o) {
-        for (let k in o) {
-            if (!o.hasOwnProperty(k)) continue;
-
-            let v = o[k];
-
-            if (v === 'undefined') o[k] = undefined;
-            if (v === 'false') o[k] = false;
-            if (v === 'null') o[k] = null;
-            if (v === 'true') o[k] = true;
-            if (v === 'NaN') o[k] = NaN;
-
-            // DO NOT SWITCH TO DOUBLE EQUALS!
-            if ((+v) == v && v !== '') o[k] = (+v);
-        }
-        return o;
-    }
-
-    // Flat object to array by property value (simplistic)
-    function obj2arr (o) {
-        let a = [];
-
-        for (let k in o) {
-            if (o.hasOwnProperty(k)) a.push(o[k]);
-        }
-
-        return a;
-    }
-
-    // Used to filter unique arrays
-    // Example: [].filter(onlyUnique);
-    function onlyUnique(value, index, self) {
-        return self.indexOf(value) === index;
-    }
-
-    // Used to filter out empty values in array
-    // Example: [].filter(removeGaps);
-    function removeGaps (el) {
-        return el != null;
-    }
-</script>
-
-<script>
     // walkObject: function (dataset, structure)
 
     // Params:
