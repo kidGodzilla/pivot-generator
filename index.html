@@ -8,9 +8,42 @@
     <title>Pivot Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.0.2/zephyr/bootstrap.min.css">
 </head>
-<body>
+<body class="">
 
-<div id="output"></div>
+<div class="container mt-5">
+    <h4>Sales Pivot Table Examples</h4>
+    <br>
+
+    <h5>One Dimension</h5>
+
+    <table id="output" class="table table-sm">
+        <thead>
+        <tr>
+            <th class="bg-success text-white" colspan="999">Sum of Sales</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Most output goes here -->
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+
+    <p>&nbsp;</p>
+
+    <h5>Two Dimensions</h5>
+
+    <table id="output2" class="table table-sm">
+        <thead>
+        <tr>
+            <th class="bg-success text-white" colspan="999">Sum of Sales</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Most output goes here -->
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="./data.js"></script>
@@ -107,6 +140,12 @@
                 o[dim].selected.push(item);
                 o[dim].total += item.sales;
             }
+
+            // Grand total
+            if (!rowDepth) {
+                if (!o.total) o.total = 0;
+                o.total += item.sales;
+            }
         });
 
         // console.log(o);
@@ -134,10 +173,49 @@
 </script>
 
 <script>
-    function renderTable(data, el) {
+    // Limitations: Depth currently cannot exceed 1 (max 2 row dimensions)
+
+    function renderTable(data, el, depth = 0) {
         // Render a bootstrap table based on input data inside selector el
 
-        
+        // data.rows -> table headings
+
+        if (!depth) {
+            let innerFragment = '';
+            data.rows.forEach(row => innerFragment += `<td class="bg-primary text-white">${ row }</td>`);
+            innerFragment += `<td class="bg-primary text-white">Totals</td>`
+            let fragment = `<tr>${ innerFragment }</tr>`;
+            $(el+' tbody').append(fragment);
+
+            let footerColspan = data.rows.length;
+
+            $(el+' tfoot').append(`<tr>
+                <td class="text-white bg-dark" colspan="${ footerColspan }">Grand Total:</td>
+                <td class="text-white bg-dark">${ data.total }</td>
+            </tr>`);
+        }
+
+        for (let k in data) {
+            if (!k || k === 'rows' || k === 'total' || k === 'selected') continue;
+
+            // Determine rowspan
+            let rowSpan = Object.keys(data[k]).length - 2;
+            let additionalCells = '';
+
+            // Build additional "Total" cells if last item in row
+            console.log(depth+1, data.rows.length)
+            if (data.rows.length === 1) {
+                additionalCells += `<td>${ data[k].total }</td>`;
+            }
+
+            let fragment = `<tr><td  class="bg-light" rowspan="${ rowSpan }">${ k }</td>${ additionalCells }</tr>`;
+
+            $(el+' tbody').append(fragment);
+
+            renderTable(data[k], el, ++depth);
+
+        }
+
 
     }
 </script>
@@ -145,13 +223,22 @@
 <script>
     let debug = 0;
 
-    let structure = {
+    let finalObject = walkObject(source_data, {
+        rows: ['region'] // , 'sales_rep', 'item_category'
+    });
+
+    console.log('Table 1', finalObject);
+    renderTable(finalObject, '#output');
+
+
+    let finalObject2 = walkObject(source_data, {
         rows: ['region', 'sales_rep'] // , 'item_category'
-    }
+    });
 
-    let finalObject = walkObject(source_data, structure);
+    console.log('Table 2', finalObject2);
+    renderTable(finalObject2, '#output2');
 
-    console.log('finalObject', finalObject);
+
 </script>
 </body>
 </html>
