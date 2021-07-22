@@ -12,26 +12,133 @@
 <script src="./data.js"></script>
 
 <script>
-    let structure = {
-        region: {
-            sales_rep: {}
-        }
-    }
+    // Utilities
 
-    function walkObject (o) {
+    // Fix Object Value Types for a Flat object
+    function fixObjectValueTypes (o) {
         for (let k in o) {
-            console.log(k, o[k]);
+            if (!o.hasOwnProperty(k)) continue;
 
-            // Walk descendent object(s)
-            if (typeof o[k] === 'object' && o[k] !== null) walkObject(o[k]);
+            let v = o[k];
 
-            
+            if (v === 'undefined') o[k] = undefined;
+            if (v === 'false') o[k] = false;
+            if (v === 'null') o[k] = null;
+            if (v === 'true') o[k] = true;
+            if (v === 'NaN') o[k] = NaN;
 
-
+            // DO NOT SWITCH TO DOUBLE EQUALS!
+            if ((+v) == v && v !== '') o[k] = (+v);
         }
+        return o;
     }
 
-    walkObject(structure);
+    // Flat object to array by property value (simplistic)
+    function obj2arr (o) {
+        let a = [];
+
+        for (let k in o) {
+            if (o.hasOwnProperty(k)) a.push(o[k]);
+        }
+
+        return a;
+    }
+
+    // Used to filter unique arrays
+    // Example: [].filter(onlyUnique);
+    function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
+    // Used to filter out empty values in array
+    // Example: [].filter(removeGaps);
+    function removeGaps (el) {
+        return el != null;
+    }
+</script>
+
+<script>
+    // walkObject: function (dataset, structure)
+
+    // Params:
+    //      dataset: an array of normalized objects with identical dimensions
+    //      structure: an object describing the structure of the desired output
+    //          Example: { rows: ['region', 'sales_rep'] }
+
+    // Performs a recursive walk through an object one time, dividing datasets by dimension,
+    // accumulating sales totals
+
+    // Limitations: total, selected, & rows are special keys and cannot be used as dimensions
+    // No safeguards against data which contains abnormal structures
+
+    function walkObject (data, o, rowDepth = 0) {
+
+        if (debug) console.log('Walking output descriptor object');
+
+        let dimensions = o.rows;
+        if (!dimensions.length) return o; // Nothing to do in this branch!
+
+        let currentDimension = o.rows[rowDepth];
+
+        if (debug) console.log('dimension', rowDepth, currentDimension, dimensions);
+
+        // Scaffold dimensions
+        let selectedData = rowDepth ? [] : data;
+
+        selectedData.forEach(item => {
+            let dim = item[currentDimension];
+
+            // Determine next rows
+            let nextCols = [];
+            for (let i = 0; i < dimensions.length; i++) {
+                if (i > rowDepth) nextCols.push(dimensions[i]);
+            }
+
+            // Scaffold dimensions that do not exist
+            if (!o[dim]) {
+                o[dim] = { total: 0, rows: nextCols, selected: [] };
+
+            } else {
+                // Push selected item to be accumulated
+                o[dim].selected.push(item);
+                o[dim].total += item.sales;
+            }
+        });
+
+        // console.log(o);
+
+        // Walk descendent dimensions
+        // if (o.rows.length > rowDepth + 1) walkObject(data, o, ++rowDepth);
+
+        if (debug) console.log('Walking subordinate dimensions');
+
+        for (let k in o) {
+            if (!k || k === 'rows' || k === 'total' || k === 'selected') continue;
+
+            // Set Totals
+            if (!o[k].total) o[k].total = 0;
+
+            if (debug) console.log(k, o[k]);
+
+            // Walk descendent object
+            let out = walkObject(o[k].selected, o[k]);
+        }
+
+        // console.log('final', o)
+        return o;
+    }
+</script>
+
+<script>
+    let debug = 0;
+
+    let structure = {
+        rows: ['region', 'sales_rep'] // , 'item_category'
+    }
+
+    let finalObject = walkObject(source_data, structure);
+
+    console.log('finalObject', finalObject);
 </script>
 </body>
 </html>
