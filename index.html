@@ -8,7 +8,32 @@
     <title>Pivot Generator</title>
 </head>
 <body>
+
 <script src="./data.js"></script>
-<script></script>
+
+<script>
+
+    let structure = {
+        region: {
+            sales_rep: {}
+        }
+    }
+
+    function walkObject (o) {
+        for (let k in o) {
+            console.log(k, o[k]);
+
+            if (typeof o[k] === 'object') walkObject(o[k]);
+
+
+
+        }
+    }
+
+    walkObject(structure);
+
+
+
+</script>
 </body>
 </html>
