@@ -7,8 +7,20 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pivot Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.0.2/zephyr/bootstrap.min.css">
+
+    <style>
+        .text-right {
+            text-align: right !important;
+        }
+        .text-monospace {
+            font-family: monospace;
+        }
+        tr:hover, tr:hover td:not(.bg-dark):not(.bg-primary) {
+            background: #00000011 !important;
+        }
+    </style>
 </head>
-<body class="">
+<body>
 
 <div class="container mt-5">
     <h4>Sales Pivot Table Examples</h4>
@@ -133,7 +145,7 @@
 
         n = parseFloat(n.toFixed(2));
 
-        return `$ ${ n.toLocaleString(n) }`;
+        return `${ n.toLocaleString(n) }`;
     }
 
     // Limitations: Depth currently cannot exceed 1 (max 2 row dimensions)
@@ -146,7 +158,7 @@
         if (!depth) {
             let innerFragment = '';
             data.rows.forEach(row => innerFragment += `<td class="bg-primary text-white">${ row }</td>`);
-            innerFragment += `<td class="bg-primary text-white">Totals</td>`
+            innerFragment += `<td class="bg-primary text-white text-right">Totals</td>`
             let fragment = `<tr>${ innerFragment }</tr>`;
             $(el+' tbody').append(fragment);
 
@@ -154,7 +166,7 @@
 
             $(el+' tfoot').append(`<tr>
                 <td class="text-white bg-dark" colspan="${ footerColspan }">Grand Total:</td>
-                <td class="text-white bg-dark">${ moneyString(data.total) }</td>
+                <td class="text-white bg-dark text-right text-monospace">${ moneyString(data.total) }</td>
             </tr>`);
         }
 
@@ -167,10 +179,10 @@
 
             // Build additional "Total" cells if last item in row
             if (data.rows.length === 1) {
-                additionalCells += `<td>${ moneyString(data[k].total) }</td>`;
+                additionalCells += `<td class="text-right"><code>${ moneyString(data[k].total) }</code></td>`;
             }
 
-            let fragment = `<tr><td  class="bg-light" rowspan="${ rowSpan }">${ k }</td>${ additionalCells }</tr>`;
+            let fragment = `<tr><td class="bg-light" rowspan="${ rowSpan }">${ k }</td>${ additionalCells }</tr>`;
 
             $(el+' tbody').append(fragment);
 
