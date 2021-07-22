@@ -139,7 +139,7 @@
 </script>
 
 <script>
-
+    // Normalize the formatting of a number/float/string in US dollars (two decimal places)
     function moneyString(n) {
         if (typeof n !== 'number') return n;
 
@@ -148,8 +148,12 @@
         return `${ n.toLocaleString(n) }`;
     }
 
-    // Limitations: Depth currently cannot exceed 1 (max 2 row dimensions)
+    // Render a table based on pivot table output
+    // Params:
+    //      data:   Input data from walkObject
+    //      el:     Table element to render the output
 
+    // Limitations: Depth currently cannot exceed 1 (max 2 row dimensions)
     function renderTable(data, el, depth = 0) {
         // Render a bootstrap table based on input data inside selector el
 
