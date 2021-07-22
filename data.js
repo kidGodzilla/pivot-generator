@@ -301,5 +301,3 @@ var source_data = [
         "sales": 139.72
     }
 ]
-
-export default source_data;
