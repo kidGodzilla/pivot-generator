@@ -127,6 +127,15 @@
 </script>
 
 <script>
+
+    function moneyString(n) {
+        if (typeof n !== 'number') return n;
+
+        n = parseFloat(n.toFixed(2));
+
+        return `$ ${ n.toLocaleString(n) }`;
+    }
+
     // Limitations: Depth currently cannot exceed 1 (max 2 row dimensions)
 
     function renderTable(data, el, depth = 0) {
@@ -145,7 +154,7 @@
 
             $(el+' tfoot').append(`<tr>
                 <td class="text-white bg-dark" colspan="${ footerColspan }">Grand Total:</td>
-                <td class="text-white bg-dark">${ data.total }</td>
+                <td class="text-white bg-dark">${ moneyString(data.total) }</td>
             </tr>`);
         }
 
@@ -158,7 +167,7 @@
 
             // Build additional "Total" cells if last item in row
             if (data.rows.length === 1) {
-                additionalCells += `<td>${ data[k].total }</td>`;
+                additionalCells += `<td>${ moneyString(data[k].total) }</td>`;
             }
 
             let fragment = `<tr><td  class="bg-light" rowspan="${ rowSpan }">${ k }</td>${ additionalCells }</tr>`;
