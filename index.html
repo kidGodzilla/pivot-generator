@@ -26,6 +26,13 @@
     <h4>Sales Pivot Table Examples</h4>
     <br>
 
+    <div class="alert alert-dark" role="alert">
+        You can view the output below in the console, and view the source
+        <a href="https://github.com/kidGodzilla/pivot-generator" target="_blank">here</a>.
+    </div>
+    <br>
+
+
     <h5>One Dimension</h5>
 
     <table id="output" class="table table-sm">
@@ -55,6 +62,17 @@
         </tbody>
         <tfoot></tfoot>
     </table>
+
+    <p>&nbsp;</p>
+
+    <h5>Three+ Dimensions</h5>
+
+    <p>Formatter function works with an unlimited number of dimensions. Render function does not. Three dimension case available in console.</p>
+
+    <p>&nbsp;</p>
+
+    <p class="mt-5">Copyright &copy; <a href="https://jamesfuthey.com" target="_blank">James Futhey</a>, 2021</p>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -217,6 +235,11 @@
     renderTable(finalObject2, '#output2');
 
 
+    let finalObject3 = walkObject(source_data, {
+        rows: ['region', 'sales_rep', 'item_category']
+    });
+
+    console.log('Table 3', finalObject3);
 </script>
 </body>
 </html>
