@@ -22,9 +22,10 @@
         for (let k in o) {
             console.log(k, o[k]);
 
-            if (typeof o[k] === 'object') walkObject(o[k]);
+            // Walk descendent object(s)
+            if (typeof o[k] === 'object' && o[k] !== null) walkObject(o[k]);
 
-
+            
 
 
         }
