@@ -175,8 +175,7 @@
     function renderTable(data, el, depth = 0) {
         // Render a bootstrap table based on input data inside selector el
 
-        // data.rows -> table headings
-
+        // data.rows -> table headings & footer
         if (!depth) {
             let innerFragment = '';
             data.rows.forEach(row => innerFragment += `<td class="bg-primary text-white">${ row }</td>`);
@@ -192,6 +191,7 @@
             </tr>`);
         }
 
+        // Render data
         for (let k in data) {
             if (!k || k === 'rows' || k === 'total' || k === 'selected') continue;
 
@@ -209,10 +209,7 @@
             $(el+' tbody').append(fragment);
 
             renderTable(data[k], el, ++depth);
-
         }
-
-
     }
 </script>
 
